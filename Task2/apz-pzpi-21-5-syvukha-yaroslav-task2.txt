@@ -1,0 +1,273 @@
+РОЗРОБКА BACK-END ЧАСТИНИ ПРОГРАМНОЇ СИСТЕМИ
+
+МЕТА РОБОТИ
+
+Темою даної лабораторної роботи є розробка back-end, тобто серверної частини проекту за темою: «Програмна система для проведення разважальних заходів з використанням розумних пристроїв, які можливо програмувати». 
+Метою роботи є отримання навичок з проектування серверної частини програмної системи з використанням Use-Case діаграми, ER-діаграми, діаграми пакетів та діаграми розгортання. У ході роботи повинна бути спроектована база даних та розгорнута серверна частина системи. Також повинна бути написана уся необхідна документація.
+Що має мати лабораторна работа:
+-	Use Case діаграмма з зображеними на ній акторами та їх взаємодією;
+-	ER-діаграмма бази даних;
+-	Rest специфікація ;
+-	Розробленна UML діаграмма розгортання;
+-	Розробленна UML діаграмма пакетів
+-	Висновки
+
+Демо відео: https://www.youtube.com/watch?v=8w3p5NwHFbA
+Папка з кодом: https://github.com/NureSyvukhaYaroslav/apz-pzpi-21-5-syvukha-yaroslav
+ 
+1 МОДЕЛЮВАННЯ ПРОГРАМНОЇ СИСТЕМИ
+
+У системи є три види користувачів: Адміністратори, Користувачі та Користувачі пристроїв, та самі Організації.  Користувачі пристроїв, Користувачі можуть взаємодіяти з веб-частиною та мобільним застосунком. Поки адміністратори взаємодіюсь з веб-частиною задля адміністрування системи (редагування, стоворення та видалення данних про коруствачів та пристроїв). В тий самий час користувачі пристроїв взаємодіють з самими пристроями. Також є зовнішні системи які можуть використовувати наше АПІ задля використання системи від лиця якоїсь організації.
+З використанням веб-додатку самі користувачі можуть додавати документи, оновлювати дані, та видаляти. Вони можуть отримувати базову статистику відносно своїх документів. Адміністратор має можливість створювати, модифікувати та видаляти данні з системи.
+Мобільний додаток дає можливість переглядати документи, та взаємодіяти з ними, а також з присторями.
+Користувачі з IoT-пристроїв можуть зробити заініціалізувати, налаштувати, і використовувати як передатчик інформації.
+Для повноцінного ознайомленням з системою була створена UML діаграма прецедентів (див. додаток А. рис. А.1).
+ 
+2 ПРОЄКТУВАННЯ БАЗИ ДАНИХ
+
+Для бази данних була створення ER діаграмма (див. рис. 1) яка і надалі була основою для створення самой бази данних, та використання ней. Вона складається з п’яти таблиць: Користувачів, Токенів, Організації, та Ролей.
+	 
+На діаграммі ми можемо побачити так зв’язки:
+-	User -> Token – Був вибраний один для багатьох тому що один користувач має мати безліч токенів, для доступу до системи. 
+-	User -> Role – Був вибраний один для багатьох. Такий тип зв’язку був вибраний через нормалізацью бази данних, і всі не важливі поля мають виностися з таблиці. Також з винисенням Ролей до іншой таблиці, з’являється можливість змінювати їх назву та легко додавати нові, при потребі.
+-	User -> File- Був вибраний один для багатьох
+-	Organization -> User - Був вибраний один для багатьох
+-	Organization -> User - Був вибраний один для багатьох
+	Користувач може бути частиною организації, а може і ні. Також з документами, вони можуть бути доданими як і користувачем, так і організацією. 
+	Сама база данних повністю контролюється біблеотекою Prisma. Дуже вдобна бібліотека яка допомагає абтрагуватися від прямої взаємодії з базою данних.
+	Також база данних на данний момент розміщена на хмарі, данні для підключення до неї знаходяться у файлу .env
+ 
+3 ТЕХНОЛОГІЇ ТА АРХІТЕКТУРНІ РІШЕННЯ
+
+Сервер написаний на фреймворку Nest.js, Дуже гручкий фремворк для джаваскрипту, він дозволяє писати код у виді дуже зручних модулів, та має нативну підтримку Jest.І оперує в середовищі Node яке потрібне для праці написаного коду.
+У  якості бази даних використано PostgreSQL, до якої з серверного застосунка здійснюється доступ за допомогою технології Prisma, Це дуже зручна бібліотека яка дозволяє створювати та оперувати базою данних за допомогою моделей та классів і вона має свою мову написання схеми.
+Для більш детальної візуалізації використаних технологій було розроблено діаграму розгортання (див. рис. 1)
+
+Для демонстрації та тестування API використовується OpenApi (Swagger), зручний інструмент для перегляду та тестування API, покращуючи якість та зручність розробки. Для забезпечення безпеки даних та конфіденційності використовується захищений протокол HTTPS, що захищає дані під час їхньої передач	.
+Щодо шифрування паролів та створення токенів авторизації, в Nest.js я використовую бібліотеку для шифрування crypto-js. Для передачі та отримування використовується властивості REST API голови запиту та печева запиту. При отриманні запиту сервер перевіряє валідність за допомогою Guard які виконують код перед обробки запитом.
+Розроблений серверний застосунок побудований за принципами Modular architecture, де модуль та складається з декількох шарів. Controller, який приймає запити, Service, який оброблює запити, Repository, який відправляє інформацію до Бази данних. І кожен рівень залежав від вищого.
+У якості способу організації коду було обрано CQRS (Command Query Responsibility Segregation), який розділяє команди, які змінюють стан системи, від запитів, які повертають дані про стан системи. Цей спосіб організації коду сприяє чіткому структуруванню коду та забезпечує легку розширюваність функціональності системи.
+В архітектура також був доданий захисник(Guard) який перевіряє запити на вілідність запитовой інформації. Тобто на те що токен вже не зіпсувався, на валідність токену, та інше. 
+Ще використовуються інтерцептори(Pipeline Interceptors) які перехватують запити та можуть їх блокувати, вони не будуть пропускати непідходящі данні до контроллера. При відправленні відповіді використовується інтерцептор, який видаляє не підходящі данні, такі як паролі інше.
+ Архітектура серверного застосунка представлена на діаграмі пакетів
+(див. додат. Б рис. Б.1).
+ Приклади частин коду серверного застосунка представлено у додатку В, Г та Д
+ 
+4 СПЕЦИФІКАЦІЯ REST
+
+REST API в даному проекті складається із 31 кінцевої точки. Кожний ендпоінт відповідає за надання даних клієнту та виконання бізнес логіки. Специфікація кожного ендпоінту наведена у виді таблиці (див. таб. 1)
+
+Таблиця 1 – Специфікація REST API
+Шлях	Метод	Назва
+/api/app/test	GET	Test
+/api/user	GET	Get Users
+/api/user/:id	GET	Get User By Id
+/api/user/:id	POST	Update User By Id
+/api/user/:id	DELETE	Delete User By Id
+/api/auth/signup	POST	Sign Up
+/api/auth/signin	POST	Sign In
+/api/auth/logout	POST	Log Out
+/api/auth/refresh-tokens	GET	Update Tokens
+/api/profile	GET	Get Profile
+/api/profile	PATCH	Update Profile
+/api/app/test	GET	Test
+/api/user	GET	Get Users
+/api/user/:id	GET	Get User By Id
+/api/user/:id	POST	Update User By Id
+/api/user/:id	DELETE	Delete User By Id
+/api/auth/signup	POST	Sign Up
+/api/auth/signin	POST	Sign In
+/api/auth/logout	POST	Log Out
+/api/auth/refresh-tokens	GET	Update Tokens
+/api/profile	GET	Get Profile
+/api/profile	PATCH	Update Profile
+/api/document/:documentId	GET	Get Document File
+/api/document/:documentId	DELETE	Delete Document
+/api/document/statistics	GET	Get Device By Id
+/api/organization	GET	Get Organization Statistics
+/api/organization/id/:id	GET	Get Organization By Id
+/api/organization/user-organization	GET	Get Current User’s Organization
+/api/organization	POST	Create Organization
+/api/organization/add-user	POST	Add Current User To Organization
+/api/organization/update	POST	Update Organization
+/api/organization/:id	DELETE	Delete Organization
+/api/organization/upload-document	POST	Upload Document From Organization
+/api/organization/delete-document	DELETE	Delete Document From Organization
+ 
+ВИСНОВКИ
+
+У ході виконання лабораторної роботи були отримані навички з проєктування серверної частини програмної системи, розробки сценаріїв використання, діаграм розгортання та пакетів, проєктуванні бази даних. Була розроблена програмна реалізація серверної частини програмної системи. При розробці продукту дотримувались вимоги до чистого коду мови програмування C#.
+ 
+ДОДАТОК B
+main.ts
+
+1	import { ValidationPipe } from '@nestjs/common';
+2	import { NestFactory } from '@nestjs/core';
+3	import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+4	import * as cookieParser from 'cookie-parser';
+5	import { config } from 'dotenv';
+6	
+7	import { AppModule } from './app.module';
+8	
+9	import 'dotenv/config';
+10	config();
+11	
+12	async function bootstrap() {
+13	  const app = await NestFactory.create(AppModule);
+14	
+15	  app.use(cookieParser());
+16	  app.setGlobalPrefix('api');
+17	  app.useGlobalPipes(new ValidationPipe());
+18	
+19	  if (process.env.NODE_ENV === 'development') {
+20	    app.enableCors({
+21	      origin: true,
+22	      credentials: true,
+23	    });
+24	
+25	    const config = new DocumentBuilder()
+26	      .setTitle('DocMe API')
+27	      .setBasePath('api')
+28	      .build();
+29	    const document = SwaggerModule.createDocument(app, config);
+30	    SwaggerModule.setup('swagger', app, document);
+31	  }
+32	
+33	  await app.listen(3000);
+34	}
+35	
+36	bootstrap(); 
+ДОДАТОК Г
+decipher-body.decorator.ts
+1	import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+2	import { AES, enc } from 'crypto-js';
+3	
+4	export const DecipherBody = createParamDecorator(
+5	  (data: unknown, ctx: ExecutionContext) => {
+6	    const request = ctx.switchToHttp().getRequest();
+7	    const ciphertext = request.body.data;
+8	    const bytes = AES.decrypt(ciphertext, process.env.AES_KEY);
+9	    const originalText = bytes.toString(enc.Utf8);
+10	
+11	    return JSON.parse(originalText);
+12	  },
+13	);
+ 
+ДОДАТОК Д
+auth.service.ts
+1	import {
+2	  ConflictException,
+3	  Injectable,
+4	  Logger,
+5	  UnauthorizedException,
+6	} from '@nestjs/common';
+7	import { JwtService } from '@nestjs/jwt';
+8	import { Token, User } from '@prisma/client';
+9	import { compareSync } from 'bcrypt';
+10	import { add } from 'date-fns';
+11	import { v4 } from 'uuid';
+12	
+13	import { SignInDto, SignUpDto } from './dto';
+14	import { Tokens } from './interfaces';
+15	import { PrismaService } from '../prisma/prisma.service';
+16	import { UserService } from '../user/user.service';
+17	
+18	@Injectable()
+19	export class AuthService {
+20	  private readonly logger = new Logger(AuthService.name);
+21	
+22	  constructor(
+23	    private readonly userService: UserService,
+24	    private readonly jwtService: JwtService,
+25	    private readonly prismaService: PrismaService,
+26	  ) {}
+27	
+28	  async register(dto: SignUpDto) {
+29	    const user: User = await this.userService
+30	      .findOne({ email: dto.email })
+31	      .catch((err) => {
+32	        this.logger.error(err);
+33	        return null;
+34	      });
+35	
+36	    if (user) {
+37	      throw new ConflictException(`User ${user.email} already registered`);
+38	    }
+39	
+40	    return this.userService.create(dto).catch((err) => {
+41	      this.logger.error(err);
+42	      return null;
+43	    });
+44	  }
+45	
+46	  async login(dto: SignInDto, agent: string): Promise<Tokens> {
+47	    const user: User = await this.userService
+48	      .findOne({ email: dto.email })
+49	      .catch((err) => {
+50	        this.logger.error(err);
+51	        return null;
+52	      });
+53	
+54	    if (user && !user.password) {
+55	      throw new UnauthorizedException(
+56	        'Account was registered with auth provider',
+57	      );
+58	    }
+59	
+60	    if (!user || !compareSync(dto.password, user.password)) {
+61	      throw new UnauthorizedException('Wrong login or password');
+62	    }
+63	
+64	    return this.generateTokens(user, agent);
+65	  }
+66	
+67	  async refreshTokens(refreshToken: string, agent: string): Promise<Tokens> {
+68	    const token = await this.prismaService.token.delete({
+69	      where: { token: refreshToken },
+70	    });
+71	    if (!token || new Date(token.exp) < new Date()) {
+72	      throw new UnauthorizedException();
+73	    }
+74	    const user = await this.userService.findOne({ id: token.userId });
+75	    return this.generateTokens(user, agent);
+76	  }
+77	
+78	  deleteRefreshToken(token: string) {
+79	    return this.prismaService.token.delete({ where: { token } });
+80	  }
+81	
+82	  makeAdmin(id: string) {
+83	    return this.userService.update(id, { roles: ['ADMIN', 'USER'] });
+84	  }
+85	
+86	  private async generateTokens(user: User, agent: string): Promise<Tokens> {
+87	    const accessToken = this.jwtService.sign({
+88	      id: user.id,
+89	      email: user.email,
+90	      roles: user.roles,
+91	    });
+92	    const refreshToken = await this.getRefreshToken(user.id, agent);
+93	
+94	    return { accessToken: `Bearer ${accessToken}`, refreshToken };
+95	  }
+96	
+97	  private async getRefreshToken(userId: string, agent: string): Promise<Token> {
+98	    const _token = await this.prismaService.token.findFirst({
+99	      where: { userId, userAgent: agent },
+100	    });
+101	
+102	    const token = _token?.token ?? '';
+103	
+104	    return this.prismaService.token.upsert({
+105	      where: { token },
+106	      update: {
+107	        token: v4(),
+108	        exp: add(new Date(), { months: 1 }),
+109	      },
+110	      create: {
+111	        token: v4(),
+112	        exp: add(new Date(), { months: 1 }),
+113	        userId,
+114	        userAgent: agent,
+115	      },
+116	    });

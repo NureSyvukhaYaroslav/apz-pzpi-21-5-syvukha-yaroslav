@@ -1,0 +1,17 @@
+FROM node:21-alpine
+
+RUN echo $DATABASE_URL
+
+WORKDIR /app
+
+RUN apk update && apk add postgresql-client
+
+COPY ./package.json ./
+COPY ./yarn.lock ./
+RUN yarn install 
+
+COPY ./prisma ./prisma/
+RUN yarn prisma generate
+
+COPY ./bash ./
+RUN chmod +x *.bash

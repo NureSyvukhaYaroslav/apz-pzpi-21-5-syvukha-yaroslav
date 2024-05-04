@@ -1,0 +1,37 @@
+version: '3.5'
+
+services:
+  prisma_migrate:
+    container_name: prisma_migrate
+    build:
+      context: .
+      dockerfile: ./docker/node/Dockerfile.migrate
+    env_file:
+      - .env
+    depends_on:
+      - db
+    command: [ "sh", "migrate.bash", "$DB_HOST", "$POSTGRES_USER" ]
+
+  db:
+    container_name: postgres_container
+    build: ./docker/postgres
+    env_file:
+      - .env
+    volumes:
+      - postgres:${PGDATA}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-U",
+          "${POSTGRES_USER}",
+          "-d",
+          "${POSTGRES_DB}"
+        ]
+    restart: unless-stopped
+
+volumes:
+  postgres:
