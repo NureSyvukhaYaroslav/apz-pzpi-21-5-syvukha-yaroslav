@@ -1,0 +1,37 @@
+export const enum ROUTE {
+  HOME = '/',
+  PAGE_NOT_FOUND = '/404',
+
+  USER = '/user',
+  USER_PROFILE = `${ROUTE.USER}/profile`,
+  USER_CONTINUE_READING = `${ROUTE.USER}/continue-reading`,
+  USER_LIST = `${ROUTE.USER}/list`,
+  USER_STATISTICS = `${ROUTE.USER}/statistics`,
+
+  ORGANIZATION = '/organization',
+  ADD_ORGANIZATION = `${ROUTE.ORGANIZATION}/add`,
+  EDIT_ORGANIZATION = `${ROUTE.ORGANIZATION}/edit`,
+
+  DOCUMENT = '/document',
+  ADD_DOCUMENT = `${ROUTE.DOCUMENT}/add`,
+  EDIT_DOCUMENT = `${ROUTE.DOCUMENT}/edit`,
+
+  MANGA = `/manga`,
+  ADD_MANGA = `${ROUTE.MANGA}/add`,
+  EDIT_MANGA = `${ROUTE.MANGA}/edit`,
+
+  CHAPTER = `/chapter`,
+  ADD_CHAPTER = `${ROUTE.CHAPTER}/add`,
+  EDIT_CHAPTER = `${ROUTE.CHAPTER}/edit`,
+
+  ADMIN = '/admin',
+  SET_ADMIN = `${ROUTE.ADMIN}/set-admin`,
+  ADMIN_USERS = `${ROUTE.ADMIN}/users`,
+  ADMIN_USERS_EDIT = `${ROUTE.ADMIN_USERS}/edit`,
+  ADMIN_ORGANIZATIONS = `${ROUTE.ADMIN}/organizations`,
+  ADMIN_ORGANIZATIONS_ADD = `${ROUTE.ADMIN_ORGANIZATIONS}/add`,
+  ADMIN_ORGANIZATIONS_EDIT = `${ROUTE.ADMIN_ORGANIZATIONS}/edit`,
+  ADMIN_DOCUMENTS = `${ROUTE.ADMIN}/documents`,
+  ADMIN_DOCUMENTS_ADD = `${ROUTE.ADMIN_DOCUMENTS}/add`,
+  ADMIN_DOCUMENTS_EDIT = `${ROUTE.ADMIN_DOCUMENTS}/edit`,
+}
