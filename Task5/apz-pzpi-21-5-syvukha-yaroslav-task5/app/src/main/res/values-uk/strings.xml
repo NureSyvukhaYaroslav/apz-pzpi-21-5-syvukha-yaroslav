@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">lb5</string>
+    <string name="email">Електронна пошта</string>
+    <string name="nickname">Псевдонім</string>
+    <string name="password">Пароль</string>
+    <string name="sign_in">Увійти</string>
+    <string name="to_sign_up">Зареєструватися</string>
+    <string name="sign_up">Реєстрація</string>
+    <string name="to_sign_in">Увійти</string>
+    <string name="document_type">Тип документу</string>
+    <string name="update">Оновити</string>
+    <string name="update_profile">Оновити профіль</string>
+    <string name="log_out">Вийти</string>
+    <string name="your_documents">Ваші документи</string>
+    <string name="download">Завантажити</string>
+    <string name="update_document">Оновити документ</string>
+    <string name="returnto">Повернутися</string>
+</resources>

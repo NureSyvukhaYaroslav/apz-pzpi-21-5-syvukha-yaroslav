@@ -1,0 +1,53 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/border"
+    android:layout_marginBottom="16dp">
+
+    <TextView
+        android:id="@+id/document_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:gravity="center_horizontal"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/document_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center_horizontal"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/document_created_at"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/document_document_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:gravity="center_horizontal" />
+
+    <Button
+      android:id="@+id/document_download_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/download"
+      android:gravity="center_horizontal" />
+
+    <Button
+        android:id="@+id/update_document"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/update_document"
+        android:gravity="center_horizontal" />
+
+</LinearLayout>

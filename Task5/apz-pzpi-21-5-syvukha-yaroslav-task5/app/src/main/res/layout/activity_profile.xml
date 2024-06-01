@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/emailTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/email"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/nicknameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/nickname"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/updateProfileButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/update_profile"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/logOutButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/log_out"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/toDocumentsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/your_documents"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/english"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="English"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/ukrainian"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ukrainian"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>

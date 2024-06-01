@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">lb5</string>
+    <string name="nickname">Nickname</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="to_sign_up">To sign up</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="to_sign_in">To sign in</string>
+    <string name="document_type">Document Type</string>
+    <string name="update">Update</string>
+    <string name="returnto">Return</string>
+    <string name="update_profile">Update Profile</string>
+    <string name="log_out">Log Out</string>
+    <string name="your_documents">Your Documents</string>
+    <string name="download">Download</string>
+    <string name="update_document">Update Document</string>
+    <string name="email">Email</string>
+</resources>

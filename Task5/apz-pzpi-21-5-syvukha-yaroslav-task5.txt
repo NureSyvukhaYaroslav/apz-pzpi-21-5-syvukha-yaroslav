@@ -1,0 +1,161 @@
+1 АРХІТЕКТУРА ТА ІНЖЕНЕРНІ РІШЕННЯ
+
+Мобільна частина написана на мові програмування Kotlin, який дозволяє швидко та гнучко писати програми до ОС Андроїд. Проект використовує «Module Architecture». Головна ідея цієї архітектури, в можливості перевикористання написаних модулей, а майбутніх проектах, з мінімальною потребою у перенаписанні коду. Але все одно вона має задатки також на шарову архітектуру, через чітке розділення на шари в середині модулей. 
+Кожен модуль розбитий на піддерикторії. Основні це Activities та Services. Також можуть бути допоміжні як Models та Helpers. Активності виступають які показуючий шар, який вже звертається до сервісів, які вже самі дають запити до сервера.
+
+1.1	ШАР МОБІЛЬНОГО ЗАСТОСУНКУ 
+
+Цей шар використовує Kotlin для написання коду, який в подальшому компілюється в код для платформи Android. Цей шар складається з Layout, що написані з допомогою мови розмітки XAML, та Activity, що додає можливість зчитування та взаємодії з написаним шаблоном.
+
+1.2	ШАР ЗВ’ЯЗКУ З API(Services)
+
+Шар забезпечує реалізації методів для з’єднання з API, конкретні методи для створення моделей, авторизації, тощо. Цей шар використовує сутності з конфігураціями, ці сервіси вже знаходятся в модулях, в яких вони і налаштовуються
+
+1.3	ЛОКАЛІЗАЦІЯ
+
+Локалізація реалізована з допомогою файлів ресурсів та Locale та Configuration. Файли ресурсів додаються як частина маніфесту програми, а Locale та Configuration вибирає файл, який потрібно зчитати при наданні потрібних тобі налаштуваннь.
+
+1.4	ЗАГАЛЬНА ІНФОРМАЦІЯ
+
+Всі сервіси реалізують абстракції, що забезпечує виконання принципу SOLID Dependency Inversion, та DRY що допомагає писати читкий та зрозумілий код, без написання вже написаного коду. Модульна архітектура дуже пов’язана з принципом не написання вже повторенного коду через те що можно просто скопіювати модулю та перенести його вже в інший проект.
+
+2	ДІАГРАМА КОМПОНЕНТІВ
+
+Була створена діаграма компонентів (рис. 1), що показує як пов’язані сторінки сутностей з сервісами, та які елементи керування вони дають.
+
+3	ДІАГРАМА ПРЕЦЕДЕНТІВ
+
+Для розуміння ситуацій використання програмної системи була сформована діаграма прецедентів (рис. 2).
+Користувач може ввійти в аккаунт, вийти з нього. Оновлювати дані свого профіля, та переглядати його. З переглядом стану своїх документів, завантаженням на свій пристрій, а також видаленням їх.
+
+4	ДІАГРАМА ПАКЕТІВ
+
+Була створена діаграма пакетів mobile частини проєкту (рис. 3).
+Ця частина проекту складається з таких пакетів як Main (основна функціональність) та i18n, Services, Activities... Вся їх функціональність була описана в попередніх розділах, а залежності показані на рисунку 3.
+
+5	ДІАГРАМА ВЗАЄМОДІЇ
+
+Була стоврена діаграма станів (рис. 4), для відображення станів, в яких може бути застосунок.
+
+Висновки:
+У ході виконання лабораторної роботи були отримані навички з проектування мобільної частини програмної системи. Результатом роботи є розроблена програмна реалізація мобільної частини програмної системи з використанням Kotlin. При розробці продукту дотримувались вимоги до чистого коду мови програмування Kotlin.
+
+Додаток A
+А.1 Код сервісу для документів
+
+1	package com.example.lb5.document
+2	
+3	import MyPreferences
+4	import android.os.Environment
+5	import com.example.lb5.document.models.Document
+6	import kotlinx.coroutines.Dispatchers
+7	import kotlinx.coroutines.withContext
+8	import org.json.JSONArray
+9	import java.io.File
+10	import java.net.HttpURLConnection
+11	import java.net.URL
+12	import java.net.URLEncoder
+13	import java.nio.charset.StandardCharsets
+14	
+15	class DocumentService {
+16	  suspend fun fetchDocuments(pref: MyPreferences): List<Document> = withContext(Dispatchers.IO) {
+17	        val url = URL("http://192.168.10.133:3000/api/document")
+18	        val connection = url.openConnection() as HttpURLConnection
+19	        connection.requestMethod = "GET"
+20	        connection.setRequestProperty("Authorization", pref.getValueStr("accessToken"))
+21	
+22	
+23	        val inputStream = connection.inputStream
+24	        val content = inputStream.bufferedReader().use { it.readText() }
+25	        val jsonArray = JSONArray(content)
+26	        val documents = mutableListOf<Document>()
+27	        for (i in 0 until jsonArray.length()) {
+28	            val jsonObject = jsonArray.getJSONObject(i)
+29	            val document = Document(
+30	                jsonObject.getString("id"),
+31	                jsonObject.getString("type"),
+32	                jsonObject.getString("createdAt"),
+33	                jsonObject.getString("userId"),
+34	                if (jsonObject.isNull("organizationId")) null else jsonObject.getString("organizationId"),
+35	                jsonObject.getString("documentType")
+36	            )
+37	            documents.add(document)
+38	        }
+39	        documents
+40	    }
+41	
+42	  suspend fun downloadDocument(pref: MyPreferences, documentId: String) = withContext(Dispatchers.IO) {
+43	    val url = URL("http://192.168.10.133:3000/api/document/$documentId")
+44	    val connection = url.openConnection() as HttpURLConnection
+45	    connection.requestMethod = "GET"
+46	    connection.setRequestProperty("Authorization", pref.getValueStr("accessToken"))
+47	
+48	    val inputStream = connection.inputStream
+49	    val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "$documentId.pdf")
+50	    inputStream.use { input ->
+51	        file.outputStream().use { fileOut ->
+52	            input.copyTo(fileOut)
+53	        }
+54	    }
+55	  }
+56	
+57	    suspend fun updateDocument(documentId: String, documentType: String, pref: MyPreferences): Boolean = withContext(Dispatchers.IO)  {
+58	      val url = URL("http://192.168.10.133:3000/api/document/update/${documentId}")
+59	
+60	      val postData = "documentType=${URLEncoder.encode(documentType, StandardCharsets.UTF_8.name())}"
+61	      val postDataBytes = postData.toByteArray(StandardCharsets.UTF_8)
+62	
+63	      val connection = url.openConnection() as HttpURLConnection
+64	      connection.requestMethod = "POST"
+65	      connection.setRequestProperty("Authorization", pref.getValueStr("accessToken"))
+66	      connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+67	      connection.setRequestProperty("Content-Length", postDataBytes.size.toString())
+68	      connection.doOutput = true
+69	      connection.outputStream.write(postDataBytes)
+70	
+71	      val responseCode = connection.responseCode
+72	      println("Response code: $responseCode")
+73	
+74	      return@withContext responseCode == HttpURLConnection.HTTP_OK
+75	    }
+A.2 Код активності для документу
+
+1	package com.example.lb5.document.activities
+2	
+3	import MyPreferences
+4	import android.os.Bundle
+5	import androidx.appcompat.app.AppCompatActivity
+6	import androidx.recyclerview.widget.LinearLayoutManager
+7	import androidx.recyclerview.widget.RecyclerView
+8	import com.example.lb5.R
+9	import com.example.lb5.document.DocumentService
+10	import kotlinx.coroutines.CoroutineScope
+11	import kotlinx.coroutines.Dispatchers
+12	import kotlinx.coroutines.launch
+13	import kotlinx.coroutines.withContext
+14	
+15	class DocumentsActivity : AppCompatActivity() {
+16	
+17	    private lateinit var documentsRecyclerView: RecyclerView
+18	    private lateinit var documentService: DocumentService
+19	    private lateinit var pref: MyPreferences
+20	
+21	    override fun onCreate(savedInstanceState: Bundle?) {
+22	        super.onCreate(savedInstanceState)
+23	        setContentView(R.layout.activity_documents)
+24	
+25	        documentService = DocumentService()
+26	        pref = MyPreferences(this)
+27	
+28	        documentsRecyclerView = findViewById(R.id.documents_recycler_view)
+29	        documentsRecyclerView.layoutManager = LinearLayoutManager(this)
+30	
+31	        CoroutineScope(Dispatchers.IO).launch {
+32	            val documents = documentService.fetchDocuments(pref)
+33	            withContext(Dispatchers.Main) {
+34	                documentsRecyclerView.adapter = DocumentAdapter(documents, pref, documentService)
+35	            }
+36	        }
+37	    }
+38	}=
+
